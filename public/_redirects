@@ -1,0 +1,8 @@
+# Cloudflare Pages Redirects
+# https://developers.cloudflare.com/pages/configuration/redirects/
+
+# SPA fallback - all routes serve index.html
+/*  /index.html  200
+
+# Optional: Redirect www to non-www (if using custom domain)
+# https://www.myaidup.com/*  https://myaidup.com/:splat  301
