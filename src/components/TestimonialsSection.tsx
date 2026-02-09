@@ -16,7 +16,8 @@ export function TestimonialsSection() {
           name: 'James T.',
           role: 'Parent managing multiple therapies',
           initial: 'J',
-          image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+          image:
+            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
         },
       ],
     },
@@ -29,7 +30,8 @@ export function TestimonialsSection() {
           role: 'Parent of 6-year-old with ASD',
           initial: 'S',
           helped: 3,
-          image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+          image:
+            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
         },
       ],
     },
@@ -41,7 +43,8 @@ export function TestimonialsSection() {
           name: 'David K.',
           role: 'Parent of newly diagnosed child',
           initial: 'D',
-          image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
+          image:
+            'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
         },
       ],
     },
@@ -49,11 +52,12 @@ export function TestimonialsSection() {
       category: 'For Non-verbal Child Parents',
       testimonials: [
         {
-          text: "My daughter is non-verbal and we were dealing with a lot of stress due to lack of speech. I feel like this app gives me a chance to understand my child better and bridge the gap so I can put words and meanings on her behavior.",
+          text: 'My daughter is non-verbal and we were dealing with a lot of stress due to lack of speech. I feel like this app gives me a chance to understand my child better and bridge the gap so I can put words and meanings on her behavior.',
           name: 'Lisa P.',
           role: 'Parent of non-verbal child',
           initial: 'L',
-          image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+          image:
+            'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
         },
       ],
     },
@@ -65,17 +69,18 @@ export function TestimonialsSection() {
           name: 'Maria R.',
           role: 'Parent of 2 children with ASD',
           initial: 'M',
-          image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop',
+          image:
+            'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop',
         },
       ],
     },
   ];
 
   // Flatten for scrolling
-  const allTestimonials = testimonialGroups.flatMap(group => 
-    group.testimonials.map(t => ({ ...t, category: group.category }))
+  const allTestimonials = testimonialGroups.flatMap(group =>
+    group.testimonials.map(t => ({ ...t, category: group.category })),
   );
-  
+
   const duplicatedTestimonials = [...allTestimonials, ...allTestimonials];
 
   useEffect(() => {
@@ -83,21 +88,21 @@ export function TestimonialsSection() {
     if (!scrollContainer) return;
 
     let animationFrameId: number;
-    let scrollPosition = 0;
-    const scrollSpeed = 0.3;
+    const scrollSpeed = 0.3; // subtle auto-scroll
 
     const animate = () => {
-      if (!isPaused) {
-        scrollPosition += scrollSpeed;
-        
+      const container = scrollRef.current;
+      if (container && !isPaused) {
         const cardWidth = 320;
         const totalWidth = allTestimonials.length * cardWidth;
-        
-        if (scrollPosition >= totalWidth) {
-          scrollPosition = 0;
+
+        let nextScrollLeft = container.scrollLeft + scrollSpeed;
+
+        if (nextScrollLeft >= totalWidth) {
+          nextScrollLeft = 0;
         }
-        
-        scrollContainer.scrollLeft = scrollPosition;
+
+        container.scrollLeft = nextScrollLeft;
       }
       animationFrameId = requestAnimationFrame(animate);
     };
@@ -112,7 +117,11 @@ export function TestimonialsSection() {
   }, [isPaused, allTestimonials.length]);
 
   return (
-    <section id="testimonials" ref={ref} className="py-16 md:py-20 bg-[#FFFBF5] overflow-hidden">
+    <section
+      id="testimonials"
+      ref={ref}
+      className="py-16 md:py-20 bg-[#FFFBF5] overflow-hidden"
+    >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -122,7 +131,7 @@ export function TestimonialsSection() {
           Trusted by Families Like Yours
         </motion.h2>
 
-        {/* Auto-scrolling Container */}
+        {/* Auto-scrolling + user-scrollable Container */}
         <div className="relative">
           <div
             ref={scrollRef}
@@ -130,13 +139,17 @@ export function TestimonialsSection() {
             onMouseLeave={() => setIsPaused(false)}
             onTouchStart={() => setIsPaused(true)}
             onTouchEnd={() => setIsPaused(false)}
-            className="flex gap-5 overflow-x-hidden cursor-pointer"
+            className="flex gap-5 overflow-x-auto cursor-pointer pb-2"
             style={{ scrollBehavior: 'auto' }}
           >
             {duplicatedTestimonials.map((testimonial, index) => (
               <div
                 key={index}
                 className="bg-white rounded-xl p-5 shadow-lg min-w-[300px] max-w-[300px] border-l-4 border-[#F57D48] flex-shrink-0 flex flex-col"
+                onClick={e => {
+                  e.stopPropagation();
+                  setIsPaused(prev => !prev);
+                }}
               >
                 {/* Category Header */}
                 <div className="mb-3 pb-2 border-b border-gray-100">
@@ -146,7 +159,7 @@ export function TestimonialsSection() {
                 </div>
 
                 <p className="text-sm text-gray-700 italic mb-4 leading-relaxed flex-1">
-                  "{testimonial.text}"
+                  &quot;{testimonial.text}&quot;
                 </p>
 
                 <div className="flex items-center gap-3">
@@ -164,8 +177,9 @@ export function TestimonialsSection() {
                 {testimonial.helped && (
                   <div className="mt-3 pt-3 border-t border-gray-100">
                     <p className="text-xs text-gray-600">
-                      {testimonial.name.split(' ')[0]} has helped {testimonial.helped} families discover AID UP.{' '}
-                      <button 
+                      {testimonial.name.split(' ')[0]} has helped {testimonial.helped} families
+                      discover AID UP.{' '}
+                      <button
                         onClick={() => {
                           const pricingSection = document.getElementById('pricing');
                           if (pricingSection) {
