@@ -8,23 +8,25 @@ export function HowItWorks() {
   const steps = [
     {
       icon: Mic,
-      title: 'Log in 30 seconds—voice or text',
+      title: 'Record 30 seconds',
       description: 'Capture observations within 2 minutes',
-      example: '"I logged \'meltdown before dinner\' while cooking"',
+      example: '"I logged \'meltdown before dinner\' and described his behaviors while cooking."',
       color: '#F57D48',
     },
     {
       icon: Cpu,
-      title: 'AI extracts 7 data points automatically',
-      description: 'Structured across developmental domains',
-      example: '"It tagged: sensory trigger, time of day, hunger cue"',
+      title: 'AI analyzes & identifies patterns',
+      description: 'Structures your data across developmental domains.',
+      example:
+        '"It tagged: sensory trigger, time of day, hunger cue, calming strategies..."',
       color: '#14B8A6',
     },
     {
       icon: BarChart3,
       title: 'Get weekly insights from OT, PT, ABA perspectives',
-      description: 'See trends, severity levels, and progress',
-      example: '"I learned his meltdowns peak before meals—try protein snack 30 min earlier"',
+      description: 'See trends, severity levels, progress, and actionable strategies.',
+      example:
+        '"I learned his meltdowns peak before meals—try protein snack 30 min earlier"',
       color: '#F57D48',
     },
     {
@@ -37,7 +39,11 @@ export function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" ref={ref} className="py-16 md:py-20 bg-gradient-to-b from-[#FFF8F0] to-white">
+    <section
+      id="how-it-works"
+      ref={ref}
+      className="py-16 md:py-20 bg-gradient-to-b from-[#FFF8F0] to-white"
+    >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -87,7 +93,13 @@ export function HowItWorks() {
                 {index < steps.length - 1 && (
                   <div className="hidden md:block absolute top-24 -right-4 text-gray-300 z-20">
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                      <path d="M5 16h22m0 0l-6-6m6 6l-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path
+                        d="M5 16h22m0 0l-6-6m6 6l-6 6"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   </div>
                 )}
