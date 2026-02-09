@@ -485,4 +485,4 @@ const SolutionSection: React.FC = () => {
   );
 };
 
-export default SolutionSection;
+export { SolutionSection };
