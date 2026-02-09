@@ -14,8 +14,6 @@ export function QRCodeModal({ isOpen, onClose }: QRModalProps) {
 
   useEffect(() => {
     if (isOpen) {
-      // Generate QR code using a simple canvas-based approach
-      // This avoids external dependencies
       generateQRCode(qrUrl).then(setQrDataUrl);
     }
   }, [isOpen, qrUrl]);
@@ -44,13 +42,13 @@ export function QRCodeModal({ isOpen, onClose }: QRModalProps) {
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
           />
 
-          {/* Modal */}
+          {/* Modal - top-centered */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.9, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            exit={{ opacity: 0, scale: 0.9, y: -20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md"
+            className="fixed left-1/2 top-8 md:top-16 -translate-x-1/2 z-50 w-full max-w-md"
           >
             <div className="bg-white rounded-2xl shadow-2xl overflow-hidden mx-4">
               {/* Header */}
@@ -62,14 +60,12 @@ export function QRCodeModal({ isOpen, onClose }: QRModalProps) {
                 >
                   <X className="w-5 h-5" />
                 </button>
-                
+
                 <div className="flex items-center gap-3 mb-2">
                   <Smartphone className="w-8 h-8" />
                   <h2 className="text-2xl font-semibold">Get the App</h2>
                 </div>
-                <p className="text-white/90">
-                  Scan with your phone camera to continue
-                </p>
+                <p className="text-white/90">Scan with your phone camera to continue</p>
               </div>
 
               {/* QR Code Section */}
@@ -101,16 +97,14 @@ export function QRCodeModal({ isOpen, onClose }: QRModalProps) {
                   <p className="text-gray-600 text-sm">
                     Point your phone camera at the QR code
                   </p>
-                  <p className="text-gray-400 text-xs mt-1">
-                    Works with iPhone & Android
-                  </p>
+                  <p className="text-gray-400 text-xs mt-1">Works with iPhone & Android</p>
                 </div>
 
                 {/* Alternative: Copy Link */}
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(qrUrl);
-                    // You could add a toast notification here
+                    // Optional: add toast notification here
                   }}
                   className="mt-4 text-[#F57D48] hover:text-[#FF9C7A] text-sm font-medium transition-colors"
                 >
@@ -132,7 +126,6 @@ export function QRCodeModal({ isOpen, onClose }: QRModalProps) {
  */
 async function generateQRCode(text: string): Promise<string> {
   try {
-    // Dynamic import to keep bundle small
     const QRCode = await import('qrcode');
     const dataUrl = await QRCode.toDataURL(text, {
       width: 200,
@@ -146,14 +139,12 @@ async function generateQRCode(text: string): Promise<string> {
     return dataUrl;
   } catch (error) {
     console.error('QR code generation failed:', error);
-    // Return a placeholder or try alternative method
     return generateQRFallback(text);
   }
 }
 
 /**
- * Fallback QR generation using Google Charts API
- * Only used if the npm package fails
+ * Fallback QR generation using external API
  */
 function generateQRFallback(text: string): string {
   const encoded = encodeURIComponent(text);
