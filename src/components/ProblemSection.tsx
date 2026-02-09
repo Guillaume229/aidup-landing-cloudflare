@@ -9,12 +9,14 @@ export function ProblemSection() {
     {
       icon: Split,
       title: 'Fragmented Care',
-      description: "Your child's story scattered across therapists, teachers, and doctors—none see the full picture",
+      description:
+        "Your child's story scattered across therapists, teachers, and doctors—none see the full picture",
     },
     {
       icon: Search,
       title: 'Lost Patterns',
-      description: 'Critical developmental patterns disappear in forgotten notes and vague memories',
+      description:
+        'Critical developmental patterns disappear in forgotten notes and vague memories',
     },
     {
       icon: Clock,
@@ -66,11 +68,17 @@ export function ProblemSection() {
           className="mt-12 bg-white rounded-xl p-8 shadow-lg max-w-3xl mx-auto border-l-4 border-[#F57D48]"
         >
           <p className="text-lg text-gray-700 italic mb-4">
-            "Before AID UP, I couldn't tell you what worked last month or why my child had a meltdown. Now I can see patterns, share real data with our therapist, and actually make informed decisions. It's like finally having a memory that works."
+            {
+              "Before AID UP, I couldn't tell you what therapy worked and what didn’t or why my child had a meltdown all the time. Now I can see patterns, share real data with practitioners, and actually make informed decisions. It's like finally having a memory that works and all cards on hands."
+            }
           </p>
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-[#FFF8F0] rounded-full flex items-center justify-center">
-              <span className="text-[#F57D48] text-xl">S</span>
+            <div className="w-12 h-12 rounded-full overflow-hidden bg-[#FFF8F0] flex-shrink-0">
+              <img
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
+                alt="Sarah M."
+                className="w-full h-full object-cover"
+              />
             </div>
             <div>
               <p className="text-gray-900">Sarah M.</p>
