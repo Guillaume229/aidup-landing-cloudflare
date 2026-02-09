@@ -15,6 +15,7 @@ export function ImprovedRadarSection() {
 
   const center = 150;
   const maxRadius = 110;
+  const labelRadius = maxRadius + 15; // pull labels slightly in so they don't clip
 
   const polarToCartesian = (angle: number, radius: number) => {
     const angleInRadians = ((angle - 90) * Math.PI) / 180;
@@ -51,7 +52,7 @@ export function ImprovedRadarSection() {
         {/* Radar Chart */}
         <svg viewBox="0 0 300 300" className="w-full h-auto mb-4">
           {/* Grid circles */}
-          {[20, 40, 60, 80, 100].map((percent) => (
+          {[20, 40, 60, 80, 100].map(percent => (
             <circle
               key={percent}
               cx={center}
@@ -64,7 +65,7 @@ export function ImprovedRadarSection() {
           ))}
 
           {/* Grid lines */}
-          {categories.map((cat) => {
+          {categories.map(cat => {
             const point = polarToCartesian(cat.angle, maxRadius);
             return (
               <line
@@ -88,10 +89,10 @@ export function ImprovedRadarSection() {
             strokeWidth="2"
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
+            transition={{ duration: 1.5, ease: 'easeOut' }}
           />
 
-          {/* Current period */}
+          {/* Current period (amber) */}
           <motion.path
             d={currentPath}
             fill="#F57D48"
@@ -100,7 +101,7 @@ export function ImprovedRadarSection() {
             strokeWidth="3"
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
-            transition={{ duration: 1.5, delay: 0.3, ease: "easeOut" }}
+            transition={{ duration: 1.5, delay: 0.3, ease: 'easeOut' }}
           />
 
           {/* Data points */}
@@ -124,8 +125,8 @@ export function ImprovedRadarSection() {
           })}
 
           {/* Labels */}
-          {categories.map((cat) => {
-            const labelPoint = polarToCartesian(cat.angle, maxRadius + 25);
+          {categories.map(cat => {
+            const labelPoint = polarToCartesian(cat.angle, labelRadius);
             return (
               <text
                 key={cat.label}
@@ -153,7 +154,9 @@ export function ImprovedRadarSection() {
               <MessageSquare className="w-4 h-4 text-[#F57D48] mt-1 flex-shrink-0" />
               <div>
                 <p className="text-xs text-gray-500 mb-1">Journal Entry</p>
-                <p className="text-sm text-gray-700">Many challenges with transitions today but hyperactivity reduced.</p>
+                <p className="text-sm text-gray-700">
+                  Many challenges with transitions today but hyperactivity reduced.
+                </p>
               </div>
             </div>
           </motion.div>
@@ -169,7 +172,10 @@ export function ImprovedRadarSection() {
               <Activity className="w-4 h-4 text-[#14B8A6] mt-1 flex-shrink-0" />
               <div>
                 <p className="text-xs text-gray-500 mb-1">OT Insight</p>
-                <p className="text-sm text-gray-700">Based on Emma's sensory profile, try a visual transition timer with 5-minute warnings</p>
+                <p className="text-sm text-gray-700">
+                  Based on Emma&apos;s sensory profile, try a visual transition timer with 5-minute
+                  warnings
+                </p>
               </div>
             </div>
           </motion.div>
@@ -185,7 +191,10 @@ export function ImprovedRadarSection() {
               <Zap className="w-4 h-4 text-[#F57D48] mt-1 flex-shrink-0" />
               <div>
                 <p className="text-xs text-gray-500 mb-1">PT Insight</p>
-                <p className="text-sm text-gray-700">Your logs show hyperactivity peaks before transitions—add 2 minutes of wall pushes beforehand.</p>
+                <p className="text-sm text-gray-700">
+                  Your logs show hyperactivity peaks before transitions—add 2 minutes of wall pushes
+                  beforehand.
+                </p>
               </div>
             </div>
           </motion.div>
@@ -201,7 +210,10 @@ export function ImprovedRadarSection() {
               <Brain className="w-4 h-4 text-[#14B8A6] mt-1 flex-shrink-0" />
               <div>
                 <p className="text-xs text-gray-500 mb-1">ABA Insight</p>
-                <p className="text-sm text-gray-700">Emma responded well to praise on Tuesday. Use immediate verbal praise + 2-min preferred activity access.</p>
+                <p className="text-sm text-gray-700">
+                  Emma responded well to praise on Tuesday. Use immediate verbal praise + 2-min
+                  preferred activity access.
+                </p>
               </div>
             </div>
           </motion.div>
