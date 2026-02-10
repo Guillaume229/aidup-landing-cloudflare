@@ -23,7 +23,7 @@ export function ReferralSection() {
             Help Another Family, Earn Recurring Income
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Know a parent struggling to track their child's progress? Share AID UP and earn 10% of their subscription—every month, for as long as they stay.
+            Know a parent struggling to get their child to progress? Share AID UP and earn 10% of their subscription—every month, for as long as they stay.
           </p>
         </motion.div>
 
