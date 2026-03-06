@@ -2,8 +2,11 @@ import { motion } from 'motion/react';
 import { Play } from 'lucide-react';
 import { ImprovedRadarSection } from './ImprovedRadarSection';
 import { CTAButton } from './CTAButton';
+import { useState } from 'react';
 
 export function Hero() {
+  const [showDemo, setShowDemo] = useState(false);
+
   return (
     <section className="relative bg-gradient-to-b from-[#FFF8F0] to-[#FFFBF5] pt-32 pb-16 md:pt-40 md:pb-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -29,7 +32,10 @@ export function Hero() {
                 Activate Your Early Access
               </CTAButton>
               
-              <button className="flex items-center justify-center gap-2 text-[#F57D48] hover:text-[#FF9C7A] px-6 py-4 transition-colors">
+              <button 
+                onClick={() => setShowDemo(true)}
+                className="flex items-center justify-center gap-2 text-[#F57D48] hover:text-[#FF9C7A] px-6 py-4 transition-colors"
+              >
                 <Play className="w-5 h-5" />
                 <span className="text-lg">Watch 2-min Demo</span>
               </button>
@@ -84,6 +90,32 @@ export function Hero() {
           <ImprovedRadarSection />
         </div>
       </div>
+
+      {/* Video Demo Modal */}
+      {showDemo && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setShowDemo(false)}
+        >
+          <div 
+            className="relative w-full max-w-3xl aspect-video rounded-xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setShowDemo(false)}
+              className="absolute -top-10 right-0 text-white text-2xl font-bold hover:opacity-80 z-10"
+            >
+              ✕ Close
+            </button>
+            <iframe
+              src="https://video.golpoai.com/share/f1b1082b-23d2-42f1-a15b-d19cba42d4dc?version=0"
+              className="w-full h-full border-0"
+              allow="autoplay; fullscreen"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }
