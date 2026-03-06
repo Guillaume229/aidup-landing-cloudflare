@@ -108,7 +108,7 @@ export function Hero() {
               ✕ Close
             </button>
             <video
-            src="/demo-video.mp4"
+            src="/Demo_1_trial_with watermark.mp4"
             controls
             autoPlay
             className="w-full h-full rounded-xl"
