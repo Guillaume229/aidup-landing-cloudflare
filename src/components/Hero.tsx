@@ -107,11 +107,12 @@ export function Hero() {
             >
               ✕ Close
             </button>
-            <iframe
-              src="https://video.golpoai.com/share/f1b1082b-23d2-42f1-a15b-d19cba42d4dc?version=0"
-              className="w-full h-full border-0"
-              allow="autoplay; fullscreen"
-              allowFullScreen
+            <video
+            src="/demo-video.mp4"
+            controls
+            autoPlay
+            className="w-full h-full rounded-xl"
+            poster="/demo-thumbnail.jpg"
             />
           </div>
         </div>
