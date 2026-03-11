@@ -2,9 +2,31 @@
 // Routes mobile users directly to the Bubble app,
 // shows QR code for desktop users.
 
-// Single source of truth for the Bubble app entry URL
-export const BUBBLE_APP_URL = 'https://app.myaidup.com/native_app_page';
+// Bubble app base — handles all known URL patterns:
+// app.myaidup.com/native_app_page
+// app.myaidup.com/version-live/native_app_page
+// app.myaidup.com/version-test/native_app_page
+export const BUBBLE_APP_BASE = 'https://app.myaidup.com';
+export const BUBBLE_APP_PATH = '/native_app_page';
+export const BUBBLE_APP_URL = `${BUBBLE_APP_BASE}${BUBBLE_APP_PATH}`;
 export const SIGNUP_URL = `${BUBBLE_APP_URL}?signup=yes`;
+
+/**
+ * Detects the correct Bubble app path from the referral URL.
+ * Preserves version-test or version-live prefix if present in the
+ * original shared link, falls back to /native_app_page for clean links.
+ */
+function getBubbleAppPath(): string {
+  if (typeof window === 'undefined') return BUBBLE_APP_PATH;
+  const path = window.location.pathname;
+
+  // If landing page was reached via a version-specific referral redirect,
+  // the version prefix is stored in sessionStorage by the Worker redirect.
+  const storedPrefix = sessionStorage.getItem('bubble_version_prefix');
+  if (storedPrefix) return `${storedPrefix}${BUBBLE_APP_PATH}`;
+
+  return BUBBLE_APP_PATH;
+}
 
 /**
  * Extracts the referral code from the current page URL if present.
@@ -23,14 +45,15 @@ export function getReferralCodeFromURL(): string | undefined {
 
 /**
  * Builds the destination URL for the Bubble app.
- * Passes through the referral code if present.
+ * Passes through the referral code and version prefix if present.
  */
 export function getQRCodeURL(referralCode?: string): string {
+  const appPath = getBubbleAppPath();
   const params = new URLSearchParams({ signup: 'yes' });
   if (referralCode) {
     params.set('r', referralCode);
   }
-  return `${BUBBLE_APP_URL}?${params.toString()}`;
+  return `${BUBBLE_APP_BASE}${appPath}?${params.toString()}`;
 }
 
 /**
@@ -40,17 +63,14 @@ export function getQRCodeURL(referralCode?: string): string {
 export function isMobileDevice(): boolean {
   if (typeof window === 'undefined') return false;
 
-  // Check for touch capability + small screen (most reliable)
   const hasTouch =
     'ontouchstart' in window || navigator.maxTouchPoints > 0;
   const isSmallScreen = window.innerWidth <= 768;
 
-  // User agent fallback
   const mobileRegex =
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
   const isMobileUA = mobileRegex.test(navigator.userAgent);
 
-  // Consider mobile if: (touch + small screen) OR mobile user agent
   return (hasTouch && isSmallScreen) || isMobileUA;
 }
 
@@ -67,19 +87,15 @@ export function handleCTAClick(): { shouldShowQR: boolean } {
   trackCTAClick(mobile ? 'mobile' : 'desktop', referralCode);
 
   if (mobile) {
-    // Mobile: redirect directly into the app, preserving referral code
     window.location.href = getQRCodeURL(referralCode);
     return { shouldShowQR: false };
   }
 
-  // Desktop: show QR modal (QRCodeModal reads referral code independently)
   return { shouldShowQR: true };
 }
 
 /**
  * Simple analytics tracking.
- * Cloudflare Web Analytics captures page views automatically.
- * This adds console logging for debug / optional integration later.
  */
 function trackCTAClick(deviceType: 'mobile' | 'desktop', referralCode?: string) {
   console.log(
