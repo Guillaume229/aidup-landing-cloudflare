@@ -6,3 +6,6 @@
 
 # 2. SPA fallback - serve index.html for all non-file routes
 /app/*    /index.html    200
+
+# 3.Automatically sends the new user to app.myaidup.com/native_app_page?signup=yes&ref=ABC123
+/ref/:code https://app.myaidup.com/native_app_page?signup=yes&ref=:code 301
