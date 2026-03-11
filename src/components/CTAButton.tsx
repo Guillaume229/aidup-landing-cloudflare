@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { QRCodeModal } from './QRCodeModal';
-import { handleCTAClick } from '../lib/deviceRouting';
+import { handleCTAClick, getReferralCodeFromURL } from '../lib/deviceRouting';
 
 interface CTAButtonProps {
   children: React.ReactNode;
@@ -17,13 +17,14 @@ export function CTAButton({
   className = '' 
 }: CTAButtonProps) {
   const [showQRModal, setShowQRModal] = useState(false);
+  const referralCode = getReferralCodeFromURL();
 
   const handleClick = () => {
     const { shouldShowQR } = handleCTAClick();
     if (shouldShowQR) {
       setShowQRModal(true);
     }
-    // If mobile, the redirect happens automatically in handleCTAClick
+    // If mobile, redirect with ?r= happens automatically in handleCTAClick
   };
 
   // Style variants
@@ -52,7 +53,8 @@ export function CTAButton({
 
       <QRCodeModal 
         isOpen={showQRModal} 
-        onClose={() => setShowQRModal(false)} 
+        onClose={() => setShowQRModal(false)}
+        referralCode={referralCode}
       />
     </>
   );
