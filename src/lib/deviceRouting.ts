@@ -2,30 +2,25 @@
 // Routes mobile users directly to the Bubble app,
 // shows QR code for desktop users.
 
-// Bubble app base — handles all known URL patterns:
-// app.myaidup.com/native_app_page
-// app.myaidup.com/version-live/native_app_page
-// app.myaidup.com/version-test/native_app_page
 export const BUBBLE_APP_BASE = 'https://app.myaidup.com';
 export const BUBBLE_APP_PATH = '/native_app_page';
 export const BUBBLE_APP_URL = `${BUBBLE_APP_BASE}${BUBBLE_APP_PATH}`;
 export const SIGNUP_URL = `${BUBBLE_APP_URL}?signup=yes`;
 
 /**
- * Detects the correct Bubble app path from the referral URL.
- * Preserves version-test or version-live prefix if present in the
- * original shared link, falls back to /native_app_page for clean links.
+ * Reads the version prefix from the landing page URL (?vp= param).
+ * Set by the Cloudflare Worker when intercepting a Bubble referral link.
+ * - /version-test  → test database
+ * - /version-live  → live database  
+ * - (empty)        → clean live URL, no prefix
  */
-function getBubbleAppPath(): string {
-  if (typeof window === 'undefined') return BUBBLE_APP_PATH;
-  const path = window.location.pathname;
-
-  // If landing page was reached via a version-specific referral redirect,
-  // the version prefix is stored in sessionStorage by the Worker redirect.
-  const storedPrefix = sessionStorage.getItem('bubble_version_prefix');
-  if (storedPrefix) return `${storedPrefix}${BUBBLE_APP_PATH}`;
-
-  return BUBBLE_APP_PATH;
+function getVersionPrefix(): string {
+  if (typeof window === 'undefined') return '';
+  const params = new URLSearchParams(window.location.search);
+  const vp = params.get('vp');
+  // Whitelist only known valid prefixes — never pass arbitrary path values
+  if (vp === '/version-test' || vp === '/version-live') return vp;
+  return '';
 }
 
 /**
@@ -45,20 +40,19 @@ export function getReferralCodeFromURL(): string | undefined {
 
 /**
  * Builds the destination URL for the Bubble app.
- * Passes through the referral code and version prefix if present.
+ * Preserves version prefix (version-test / version-live) and referral code.
  */
 export function getQRCodeURL(referralCode?: string): string {
-  const appPath = getBubbleAppPath();
+  const prefix = getVersionPrefix();
   const params = new URLSearchParams({ signup: 'yes' });
   if (referralCode) {
     params.set('r', referralCode);
   }
-  return `${BUBBLE_APP_BASE}${appPath}?${params.toString()}`;
+  return `${BUBBLE_APP_BASE}${prefix}${BUBBLE_APP_PATH}?${params.toString()}`;
 }
 
 /**
  * Detects if the current device is mobile.
- * Uses multiple detection methods for accuracy.
  */
 export function isMobileDevice(): boolean {
   if (typeof window === 'undefined') return false;
@@ -76,9 +70,9 @@ export function isMobileDevice(): boolean {
 
 /**
  * Handles CTA click based on device type.
- * Reads referral code from current URL and passes it through.
- * - Mobile: Direct redirect to Bubble app (with ?r= if present)
- * - Desktop: Returns false (caller should show QR modal)
+ * Preserves version prefix and referral code through to Bubble.
+ * - Mobile: Direct redirect to Bubble app (with correct version + ?r=)
+ * - Desktop: Returns shouldShowQR: true (QRCodeModal handles the rest)
  */
 export function handleCTAClick(): { shouldShowQR: boolean } {
   const mobile = isMobileDevice();
