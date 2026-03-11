@@ -1,19 +1,22 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Smartphone, QrCode } from 'lucide-react';
+import { X, Smartphone, QrCode, Copy, Check } from 'lucide-react';
 import { getQRCodeURL } from '../lib/deviceRouting';
 
 interface QRModalProps {
   isOpen: boolean;
   onClose: () => void;
+  referralCode?: string;
 }
 
-export function QRCodeModal({ isOpen, onClose }: QRModalProps) {
+export function QRCodeModal({ isOpen, onClose, referralCode }: QRModalProps) {
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
-  const qrUrl = getQRCodeURL();
+  const [copied, setCopied] = useState(false);
+  const qrUrl = getQRCodeURL(referralCode);
 
   useEffect(() => {
     if (isOpen) {
+      setQrDataUrl('');
       generateQRCode(qrUrl).then(setQrDataUrl);
     }
   }, [isOpen, qrUrl]);
@@ -28,6 +31,24 @@ export function QRCodeModal({ isOpen, onClose }: QRModalProps) {
       return () => document.removeEventListener('keydown', handleEscape);
     }
   }, [isOpen, onClose]);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(qrUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback for browsers that block clipboard without user gesture
+      const textarea = document.createElement('textarea');
+      textarea.value = qrUrl;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -84,10 +105,19 @@ export function QRCodeModal({ isOpen, onClose }: QRModalProps) {
                   )}
                 </div>
 
+                {/* Referral badge - only shown when referral code is present */}
+                {referralCode && (
+                  <div className="mt-3 px-3 py-1 bg-[#F57D48]/10 rounded-full">
+                    <p className="text-xs text-[#F57D48] font-medium">
+                      Referral code: <span className="font-bold">{referralCode}</span>
+                    </p>
+                  </div>
+                )}
+
                 {/* URL Display */}
-                <div className="mt-4 text-center">
+                <div className="mt-4 text-center w-full">
                   <p className="text-sm text-gray-500 mb-2">QR Code URL:</p>
-                  <code className="text-xs bg-gray-100 px-3 py-1.5 rounded-lg text-gray-700 break-all">
+                  <code className="text-xs bg-gray-100 px-3 py-1.5 rounded-lg text-gray-700 break-all block">
                     {qrUrl}
                   </code>
                 </div>
@@ -100,15 +130,22 @@ export function QRCodeModal({ isOpen, onClose }: QRModalProps) {
                   <p className="text-gray-400 text-xs mt-1">Works with iPhone & Android</p>
                 </div>
 
-                {/* Alternative: Copy Link */}
+                {/* Copy Link Button with feedback */}
                 <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(qrUrl);
-                    // Optional: add toast notification here
-                  }}
-                  className="mt-4 text-[#F57D48] hover:text-[#FF9C7A] text-sm font-medium transition-colors"
+                  onClick={handleCopy}
+                  className="mt-4 flex items-center gap-2 text-[#F57D48] hover:text-[#FF9C7A] text-sm font-medium transition-colors"
                 >
-                  Or copy link to clipboard →
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      Or copy link to clipboard →
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -121,8 +158,6 @@ export function QRCodeModal({ isOpen, onClose }: QRModalProps) {
 
 /**
  * Generate QR code as data URL
- * Uses a lightweight approach with the QRCode library
- * Falls back to a placeholder if generation fails
  */
 async function generateQRCode(text: string): Promise<string> {
   try {
